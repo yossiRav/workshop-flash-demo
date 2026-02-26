@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkshopFlash ⚡ — הדגמה</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #f59e0b;
+    --accent2: #3b82f6;
+    --accent3: #10b981;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --danger: #ef4444;
+    --esp: #f59e0b;
+    --arduino: #3b82f6;
+    --esp8266: #f97316;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .topbar-left { display: flex; align-items: center; gap: 20px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
+  }
+  .logo-icon {
+    background: var(--accent);
+    color: #000;
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .logo-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .tab-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn.active {
+    background: var(--surface2);
+    color: var(--text);
+  }
+  .tab-btn:hover { color: var(--text); }
+
+  .btn-settings {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn-settings:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* RIGHT SIDEBAR — components library */
+  .sidebar {
+    width: 240px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .search-box {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-box input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    direction: rtl;
+  }
+  .search-box input:focus { border-color: var(--accent2); }
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .components-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px;
+  }
+  .components-list::-webkit-scrollbar { width: 4px; }
+  .components-list::-webkit-scrollbar-track { background: transparent; }
+  .components-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .cat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    padding: 8px 6px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .cat-label .count {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+
+  .component-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 4px;
+    cursor: grab;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .component-card:hover {
+    border-color: var(--accent2);
+    background: #1c2333;
+    transform: translateX(-2px);
+  }
+  .component-card:active { cursor: grabbing; transform: scale(0.97); }
+  .component-card.dragging { opacity: 0.5; }
+
+  .comp-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+  .comp-info { flex: 1; min-width: 0; }
+  .comp-name { font-size: 0.82rem; font-weight: 600; }
+  .comp-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; line-height: 1.3; }
+
+  /* CENTER — build area */
+  .center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Controller selector */
+  .controller-bar {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .controller-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+  .controller-card {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .controller-card:hover { border-color: var(--text-muted); }
+  .controller-card.selected-arduino { border-color: var(--arduino); background: rgba(59,130,246,0.1); }
+  .controller-card.selected-esp32 { border-color: var(--esp); background: rgba(245,158,11,0.1); }
+  .controller-card.selected-esp8266 { border-color: var(--esp8266); background: rgba(249,115,22,0.1); }
+  .ctrl-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Build area */
+  .build-area {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    padding: 16px;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: flex-start;
+  }
+  .drop-zone.empty {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .drop-zone.drag-over {
+    border-color: var(--accent2);
+    background: rgba(59,130,246,0.05);
+  }
+  .drop-zone-hint {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: center;
+  }
+
+  .selected-comp {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    position: relative;
+    cursor: default;
+    transition: all 0.2s;
+    animation: popIn 0.2s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .selected-comp:hover { border-color: var(--danger); }
+  .selected-comp .remove-btn {
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 0.9rem; padding: 0; margin-right: -2px;
+    transition: color 0.15s;
+  }
+  .selected-comp:hover .remove-btn { color: var(--danger); }
+
+  /* Description box */
+  .desc-area {
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    flex-shrink: 0;
+  }
+  .desc-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .desc-label span { color: var(--accent); }
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+    direction: rtl;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent2); }
+  textarea::placeholder { color: var(--text-muted); }
+
+  .char-count { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; text-align: left; }
+
+  .create-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Heebo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .create-btn:hover { background: #2563eb; transform: translateY(-1px); }
+  .create-btn:active { transform: translateY(0); }
+  .create-btn.loading { background: #374151; cursor: not-allowed; }
+
+  /* LEFT — results panel */
+  .results-panel {
+    width: 380px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .results-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .result-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .result-tab.active {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  .result-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+  }
+  .result-content::-webkit-scrollbar { width: 4px; }
+  .result-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Wiring table */
+  .wiring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .wiring-table th {
+    text-align: right;
+    padding: 8px 10px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .wiring-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .wiring-table tr:hover td { background: var(--surface2); }
+  .pin-tag {
+    background: rgba(59,130,246,0.15);
+    color: var(--accent2);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+  }
+  .pin-gnd { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .pin-vcc { background: rgba(16,185,129,0.15); color: var(--accent3); }
+
+  /* Code tab */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: #c9d1d9;
+    overflow-x: auto;
+    white-space: pre;
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-family: 'Heebo', sans-serif;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .cm { color: #6272a4; }
+  .st { color: #f1fa8c; }
+  .nm { color: #bd93f9; }
+
+  /* Explanation */
+  .explanation-block {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .explanation-block h4 { color: var(--accent); margin-bottom: 8px; font-size: 0.9rem; }
+  .explanation-block p { margin-bottom: 10px; }
+
+  /* Flash section */
+  .flash-bar {
+    border-top: 1px solid var(--border);
+    padding: 12px 14px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .port-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .port-select {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text);
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+    direction: rtl;
+  }
+  .refresh-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .flash-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .flash-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(245,158,11,0.3); }
+
+  /* Progress bar */
+  .progress-wrap {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+    border-radius: 2px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 20px;
+  }
+  .empty-icon { font-size: 2.5rem; opacity: 0.4; }
+
+  /* Tooltip */
+  .tooltip {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* History */
+  .history-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .history-item:hover { border-color: var(--accent2); }
+  .history-name { font-size: 0.85rem; font-weight: 700; }
+  .history-meta { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+
+  /* Demo badge */
+  .demo-badge {
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: var(--accent);
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* Generating overlay */
+  .generating {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 16px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent2);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hidden { display: none !important; }
+
+  /* Notification */
+  .notif {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    transition: transform 0.3s;
+    z-index: 1000;
+    white-space: nowrap;
+  }
+  .notif.show { transform: translateX(-50%) translateY(0); }
+  .notif.success { border-color: var(--accent3); color: var(--accent3); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div>WorkshopFlash</div>
+        <div class="logo-sub">בנה פרויקט אלקטרוניקה בקלות</div>
+      </div>
+    </div>
+    <div class="demo-badge">DEMO</div>
+    <button class="tab-btn active" onclick="switchView('build')">🔧 בנאי</button>
+    <button class="tab-btn" onclick="switchView('history')">📁 היסטוריה</button>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-settings">⚙️ הגדרות</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- RESULTS PANEL (left) -->
+  <div class="results-panel" id="resultsPanel">
+    <div class="results-tabs">
+      <button class="result-tab active" onclick="switchTab('wiring', this)">🔌 חיבורים</button>
+      <button class="result-tab" onclick="switchTab('code', this)">💻 קוד</button>
+      <button class="result-tab" onclick="switchTab('explain', this)">📖 הסבר</button>
+    </div>
+
+    <div class="result-content" id="resultContent">
+      <div class="generating" id="generatingView">
+        <div class="spinner"></div>
+        <div>Claude מייצר קוד...</div>
+        <div style="font-size:0.78rem; color: var(--text-muted)">ממוצע: 15-30 שניות</div>
+      </div>
+
+      <div id="emptyResult" class="empty-state">
+        <div class="empty-icon">⚡</div>
+        <div>בחר בקר ורכיבים,<br>תאר את הפרויקט ולחץ "צור פרויקט"</div>
+      </div>
+
+      <div id="wiringTab" class="hidden">
+        <table class="wiring-table">
+          <thead>
+            <tr>
+              <th>רכיב</th>
+              <th>פין רכיב</th>
+              <th>פין בקר</th>
+            </tr>
+          </thead>
+          <tbody id="wiringBody"></tbody>
+        </table>
+      </div>
+
+      <div id="codeTab" class="hidden">
+        <div class="code-block" id="codeBlock">
+          <button class="copy-btn" onclick="copyCode()">העתק</button>
+          <span id="codeContent"></span>
+        </div>
+      </div>
+
+      <div id="explainTab" class="hidden">
+        <div class="explanation-block" id="explainContent"></div>
+      </div>
+    </div>
+
+    <div class="flash-bar">
+      <div style="font-size:0.75rem; color: var(--text-muted); font-weight:700;">⚡ צרוב על הבקר</div>
+      <div class="port-row">
+        <span style="font-size:0.78rem; color:var(--text-muted);">פורט:</span>
+        <select class="port-select">
+          <option>COM3 — CH340 USB</option>
+          <option>COM4 — Silicon Labs CP210x</option>
+        </select>
+        <button class="refresh-btn">🔄</button>
+      </div>
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <button class="flash-btn" onclick="simulateFlash()">⚡ התחל צריבה ⚡</button>
+      <div class="tooltip">esp32:esp32:esp32 — ESP32 Dev Board</div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div id="buildView">
+      <!-- Controller selector -->
+      <div class="controller-bar">
+        <span class="controller-label">* בחר בקר</span>
+        <div class="controller-card selected-arduino" onclick="selectController(this, 'arduino')" data-ctrl="arduino">
+          <div class="ctrl-dot" style="background:var(--arduino)"></div>
+          Arduino Uno R3
+        </div>
+        <div class="controller-card" onclick="selectController(this, 'esp32')" data-ctrl="esp32">
+          <div class="ctrl-dot" style="background:var(--esp)"></div>
+          ESP32 Dev Board
+        </div>
+        <div class="controller-card" onclick="selectController(this, 'esp8266')" data-ctrl="esp8266">
+          <div class="ctrl-dot" style="background:var(--esp8266)"></div>
+          ESP8266 NodeMCU
+        </div>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="build-area">
+        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">
+          רכיבים שנבחרו
+          <span id="compCount" style="background:var(--accent2); color:white; border-radius:10px; padding:1px 7px; font-size:0.7rem; margin-right:6px;">0</span>
+        </div>
+        <div class="drop-zone empty" id="dropZone"
+             ondragover="onDragOver(event)"
+             ondragleave="onDragLeave(event)"
+             ondrop="onDrop(event)">
+          <div class="drop-zone-hint" id="dropHint">
+            <span style="font-size:1.5rem; display:block; margin-bottom:6px; opacity:0.4">🎯</span>
+            גרור רכיבים מהספרייה לכאן<br>
+            <span style="font-size:0.75rem;">או לחץ עליהם להוספה מהירה</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description + create button -->
+      <div class="desc-area">
+        <div class="desc-label">
+          <span>🔥</span> תאר מה הפרויקט צריך לעשות
+        </div>
+        <textarea id="descText" rows="3" maxlength="500"
+          placeholder="לדוגמה: כשמזהים תנועה עם חיישן PIR, הדלק נורה אדומה ושלח התראה דרך הסריאל עם זמן הגילוי..."
+          oninput="updateCharCount()"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/500 תווים</div>
+        <button class="create-btn" id="createBtn" onclick="simulateGenerate()">
+          ⚡ צור פרויקט ⚡
+        </button>
+      </div>
+    </div>
+
+    <div id="historyView" class="hidden" style="padding:16px; overflow-y:auto; flex:1;">
+      <div style="font-size:0.85rem; color:var(--text-muted); font-weight:700; margin-bottom:12px;">📁 פרויקטים שמורים</div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR — components library -->
+  <div class="sidebar">
+    <div class="sidebar-header">ספריית רכיבים</div>
+    <div class="search-box">
+      <input type="text" placeholder="חפש רכיב..." id="searchInput" oninput="filterComponents()">
+    </div>
+    <div class="components-list" id="componentsList"></div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+const COMPONENTS = [
+  { cat: 'חיישנים', items: [
+    { id: 'dht11', icon: '🌡️', name: 'חיישן DHT11', desc: 'טמפרטורה ולחות' },
+    { id: 'dht22', icon: '🌡️', name: 'חיישן DHT22', desc: 'טמפרטורה ולחות מדויק' },
+    { id: 'hcsr04', icon: '📡', name: 'חיישן HC-SR04', desc: 'מרחק אולטרסוני 2-400ס"מ' },
+    { id: 'pir', icon: '👁️', name: 'חיישן PIR HC-SR501', desc: 'זיהוי תנועה' },
+    { id: 'soil', icon: '🌱', name: 'חיישן לחות קרקע', desc: 'מד לחות לגינה' },
+    { id: 'bmp280', icon: '🔵', name: 'חיישן BMP280', desc: 'לחץ אוויר וטמפרטורה' },
+    { id: 'ldr', icon: '☀️', name: 'פוטורזיסטור LDR', desc: 'חיישן עוצמת אור' },
+    { id: 'mic', icon: '🎤', name: 'מיקרופון KY-038', desc: 'חיישן רעש' },
+    { id: 'mpu6050', icon: '🔄', name: 'MPU-6050', desc: 'ג\'ירוסקופ/תאוצה 6 צירים' },
+  ]},
+  { cat: 'תצוגה', items: [
+    { id: 'oled', icon: '🖥️', name: 'מסך OLED 0.96"', desc: 'תצוגה I2C 128x64' },
+    { id: 'lcd', icon: '📟', name: 'LCD 16x2 + I2C', desc: 'תצוגת תווים בסיסית' },
+    { id: 'led_red', icon: '🔴', name: 'נורה אדומה', desc: 'LED 5mm 20mA' },
+    { id: 'led_green', icon: '🟢', name: 'נורה ירוקה', desc: 'LED 5mm 20mA' },
+    { id: 'neopixel', icon: '🌈', name: 'רצועת NeoPixel WS2812B', desc: 'LED RGB חכם' },
+  ]},
+  { cat: 'קלט', items: [
+    { id: 'button', icon: '🔘', name: 'כפתור לחיצה', desc: 'מתג רגעי NO' },
+    { id: 'pot', icon: '🎚️', name: 'פוטנציומטר 10kΩ', desc: 'בורג מתח משתנה' },
+    { id: 'joystick', icon: '🕹️', name: 'ג\'ויסטיק KY-023', desc: 'ג\'ויסטיק אנלוגי XY' },
+    { id: 'keypad', icon: '⌨️', name: 'לוחית מקשים 4x4', desc: '16 כפתורים' },
+    { id: 'touch', icon: '👆', name: 'חיישן מגע TTP223', desc: 'מגע קיבולתי' },
+  ]},
+  { cat: 'מנועים', items: [
+    { id: 'servo', icon: '⚙️', name: 'סרבו SG90', desc: 'מנוע סרבו 0-180°' },
+    { id: 'stepper', icon: '🔩', name: 'מנוע צעד 28BYJ-48', desc: '5V עם ULN2003' },
+    { id: 'dc_motor', icon: '🔧', name: 'מנוע DC TT', desc: 'עם L298N' },
+  ]},
+  { cat: 'תקשורת', items: [
+    { id: 'bt', icon: '📶', name: 'מודול Bluetooth HC-05', desc: 'תקשורת BT קלאסית' },
+    { id: 'ir_recv', icon: '📡', name: 'מקלט IR TSOP4838', desc: 'קבלת אותות שלט' },
+    { id: 'ir_send', icon: '🔦', name: 'משדר IR KY-005', desc: 'שידור אותות IR' },
+  ]},
+  { cat: 'שעון וזמן', items: [
+    { id: 'rtc', icon: '🕐', name: 'מודול שעון RTC DS3231', desc: 'שעון זמן אמת מדויק' },
+  ]},
+];
+
+let selectedComponents = [];
+let activeTab = 'wiring';
+let currentController = 'arduino';
+let projectHistory = [
+  { name: 'מד טמפרטורה עם OLED', comps: 'DHT22, OLED', ctrl: 'Arduino Uno R3', date: 'לפני 2 ימים' },
+  { name: 'שלט IR אוניברסלי', comps: 'KY-005, TSOP4838', ctrl: 'ESP32 Dev Board', date: 'לפני שבוע' },
+  { name: 'רמזור חכם', comps: 'LED אדום, ירוק, כחכול, כפתור', ctrl: 'Arduino Uno R3', date: 'לפני שבועיים' },
+];
+let draggingComp = null;
+let generating = false;
+let hasResult = false;
+
+function buildSidebar() {
+  const list = document.getElementById('componentsList');
+  list.innerHTML = COMPONENTS.map(cat => `
+    <div class="cat-label" onclick="toggleCat(this)">
+      ${cat.cat}
+      <span class="count">${cat.items.length}</span>
+    </div>
+    <div class="cat-items">
+      ${cat.items.map(c => `
+        <div class="component-card"
+          draggable="true"
+          data-id="${c.id}"
+          data-name="${c.name}"
+          data-icon="${c.icon}"
+          data-desc="${c.desc}"
+          ondragstart="onDragStart(event, '${c.id}', '${c.name}', '${c.icon}')"
+          onclick="addComponent('${c.id}', '${c.name}', '${c.icon}')">
+          <div class="comp-icon">${c.icon}</div>
+          <div class="comp-info">
+            <div class="comp-name">${c.name}</div>
+            <div class="comp-desc">${c.desc}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function toggleCat(el) {
+  const items = el.nextElementSibling;
+  items.style.display = items.style.display === 'none' ? '' : 'none';
+}
+
+function filterComponents() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.component-card').forEach(card => {
+    const name = card.dataset.name.toLowerCase();
+    const desc = card.querySelector('.comp-desc').textContent.toLowerCase();
+    card.style.display = (name.includes(q) || desc.includes(q)) ? '' : 'none';
+  });
+}
+
+function addComponent(id, name, icon) {
+  if (selectedComponents.find(c => c.id === id)) {
+    showNotif(`${name} כבר נוסף`);
+    return;
+  }
+  selectedComponents.push({ id, name, icon });
+  renderDropZone();
+  updateCompCount();
+}
+
+function removeComponent(id) {
+  selectedComponents = selectedComponents.filter(c => c.id !== id);
+  renderDropZone();
+  updateCompCount();
+}
+
+function renderDropZone() {
+  const dz = document.getElementById('dropZone');
+  const hint = document.getElementById('dropHint');
+  if (selectedComponents.length === 0) {
+    dz.classList.add('empty');
+    hint.style.display = '';
+    dz.innerHTML = '';
+    dz.appendChild(hint);
+  } else {
+    dz.classList.remove('empty');
+    hint.style.display = 'none';
+    const existing = dz.querySelectorAll('.selected-comp');
+    existing.forEach(e => e.remove());
+    selectedComponents.forEach(c => {
+      const el = document.createElement('div');
+      el.className = 'selected-comp';
+      el.innerHTML = `${c.icon} ${c.name} <button class="remove-btn" onclick="removeComponent('${c.id}')">×</button>`;
+      dz.appendChild(el);
+    });
+  }
+}
+
+function updateCompCount() {
+  document.getElementById('compCount').textContent = selectedComponents.length;
+}
+
+// Drag and drop
+function onDragStart(event, id, name, icon) {
+  draggingComp = { id, name, icon };
+  event.dataTransfer.effectAllowed = 'copy';
+}
+
+function onDragOver(event) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'copy';
+  document.getElementById('dropZone').classList.add('drag-over');
+}
+
+function onDragLeave(event) {
+  document.getElementById('dropZone').classList.remove('drag-over');
+}
+
+function onDrop(event) {
+  event.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  if (draggingComp) {
+    addComponent(draggingComp.id, draggingComp.name, draggingComp.icon);
+    draggingComp = null;
+  }
+}
+
+function selectController(el, ctrl) {
+  document.querySelectorAll('.controller-card').forEach(c => {
+    c.className = 'controller-card';
+  });
+  currentController = ctrl;
+  el.classList.add(`selected-${ctrl}`);
+  if (hasResult) {
+    document.querySelector('.tooltip').textContent =
+      ctrl === 'esp32' ? 'esp32:esp32:esp32 — ESP32 Dev Board' :
+      ctrl === 'arduino' ? 'arduino:avr:uno — Arduino Uno R3' :
+      'esp8266:esp8266:nodemcuv2 — ESP8266 NodeMCU';
+  }
+}
+
+function updateCharCount() {
+  const len = document.getElementById('descText').value.length;
+  document.getElementById('charCount').textContent = len;
+}
+
+// Simulate generation
+function simulateGenerate() {
+  if (generating) return;
+  if (selectedComponents.length === 0) {
+    showNotif('⚠️ נא לבחור לפחות רכיב אחד');
+    return;
+  }
+  const desc = document.getElementById('descText').value.trim();
+  if (!desc) {
+    showNotif('⚠️ נא לתאר את הפרויקט');
+    return;
+  }
+
+  generating = true;
+  document.getElementById('createBtn').classList.add('loading');
+  document.getElementById('createBtn').textContent = '⏳ יוצר פרויקט...';
+
+  // Show generating state
+  document.getElementById('emptyResult').classList.add('hidden');
+  document.getElementById('wiringTab').classList.add('hidden');
+  document.getElementById('codeTab').classList.add('hidden');
+  document.getElementById('explainTab').classList.add('hidden');
+  document.getElementById('generatingView').style.display = 'flex';
+
+  setTimeout(() => {
+    generating = false;
+    hasResult = true;
+    document.getElementById('createBtn').classList.remove('loading');
+    document.getElementById('createBtn').innerHTML = '⚡ צור פרויקט ⚡';
+    document.getElementById('generatingView').style.display = 'none';
+    buildResult();
+    showNotif('✅ הפרויקט נוצר בהצלחה!', 'success');
+  }, 2800);
+}
+
+function buildResult() {
+  // Build wiring table
+  const wiring = selectedComponents.flatMap((c, i) => {
+    const pinMap = {
+      dht11: [['DATA', `${currentController === 'esp32' ? 'GPIO4' : 'D4'}`, 'signal'], ['VCC', '5V', 'vcc'], ['GND', 'GND', 'gnd']],
+      dht22: [['DATA', `${currentController === 'esp32' ? 'GPIO4' : 'D4'}`, 'signal'], ['VCC', '5V', 'vcc'], ['GND', 'GND', 'gnd']],
+      hcsr04: [['TRIG', `${currentController === 'esp32' ? 'GPIO5' : 'D5'}`, 'signal'], ['ECHO', `${currentController === 'esp32' ? 'GPIO18' : 'D6'}`, 'signal'], ['VCC', '5V', 'vcc'], ['GND', 'GND', 'gnd']],
+      pir: [['OUT', `${currentController === 'esp32' ? 'GPIO13' : 'D7'}`, 'signal'], ['VCC', '5V', 'vcc'], ['GND', 'GND', 'gnd']],
+      led_red: [['A (+)', `${currentController === 'esp32' ? 'GPIO2' : 'D2'} + 220Ω`, 'signal'], ['K (-)', 'GND', 'gnd']],
+      led_green: [['A (+)', `${currentController === 'esp32' ? 'GPIO14' : 'D3'} + 220Ω`, 'signal'], ['K (-)', 'GND', 'gnd']],
+      oled: [['SDA', currentController === 'esp32' ? 'GPIO21' : 'A4', 'signal'], ['SCL', currentController === 'esp32' ? 'GPIO22' : 'A5', 'signal'], ['VCC', '3.3V', 'vcc'], ['GND', 'GND', 'gnd']],
+      button: [['פין 1', `${currentController === 'esp32' ? 'GPIO12' : 'D8'} (INPUT_PULLUP)`, 'signal'], ['פין 2', 'GND', 'gnd']],
+    };
+    const pins = pinMap[c.id] || [['VCC', '5V', 'vcc'], ['GND', 'GND', 'gnd'], ['DATA', `PIN ${i+2}`, 'signal']];
+    return pins.map(([pin, ctrl, type]) => ({ comp: c.name, icon: c.icon, pin, ctrl, type }));
+  });
+
+  const tbody = document.getElementById('wiringBody');
+  tbody.innerHTML = wiring.map(w => `
+    <tr>
+      <td>${w.icon} ${w.comp}</td>
+      <td><span class="pin-tag">${w.pin}</span></td>
+      <td><span class="pin-tag ${w.type === 'gnd' ? 'pin-gnd' : w.type === 'vcc' ? 'pin-vcc' : ''}">${w.ctrl}</span></td>
+    </tr>
+  `).join('');
+
+  // Build code
+  const compIncludes = [];
+  const compSetup = [];
+  selectedComponents.forEach(c => {
+    if (c.id === 'dht11' || c.id === 'dht22') {
+      compIncludes.push('#include <DHT.h>');
+      compSetup.push(`DHT dht(4, ${c.id === 'dht11' ? 'DHT11' : 'DHT22'});`);
+    }
+    if (c.id === 'oled') {
+      compIncludes.push('#include <Adafruit_SSD1306.h>');
+      compSetup.push('Adafruit_SSD1306 display(128, 64, &Wire, -1);');
+    }
+    if (c.id === 'hcsr04') {
+      compSetup.push('const int TRIG = 5, ECHO = 18;');
+    }
+  });
+
+  const ctrlComment = currentController === 'esp32' ? 'ESP32 Dev Board' :
+                      currentController === 'arduino' ? 'Arduino Uno R3' : 'ESP8266 NodeMCU';
+
+  const code = `<span class="cm">// ========================================
+// פרויקט: ${document.getElementById('descText').value.substring(0, 50)}...
+// בקר: ${ctrlComment}
+// רכיבים: ${selectedComponents.map(c=>c.name).join(', ')}
+// נוצר על ידי WorkshopFlash ⚡
+// ========================================</span>
+
+${compIncludes.length ? '<span class="kw">#include</span> <span class="st">&lt;Arduino.h&gt;</span>\n' + compIncludes.map(i => `<span class="kw">#include</span> <span class="st">${i.replace('#include ','')}</span>`).join('\n') : '<span class="kw">#include</span> <span class="st">&lt;Arduino.h&gt;</span>'}
+
+<span class="cm">// הגדרות פינים</span>
+${selectedComponents.map((c,i) => `<span class="kw">const int</span> <span class="nm">PIN_${c.id.toUpperCase()}</span> = ${i+2};`).join('\n')}
+
+${compSetup.join('\n')}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">Serial.begin</span>(<span class="nm">115200</span>);
+  <span class="cm">// אתחול רכיבים</span>
+${selectedComponents.map(c => `  <span class="fn">pinMode</span>(PIN_${c.id.toUpperCase()}, OUTPUT);`).join('\n')}
+  <span class="fn">Serial.println</span>(<span class="st">"מוכן!"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cm">// לוגיקה ראשית</span>
+${selectedComponents.map(c => `  <span class="cm">// ${c.name}</span>`).join('\n')}
+
+  <span class="fn">delay</span>(<span class="nm">1000</span>);
+}`;
+
+  document.getElementById('codeContent').innerHTML = code;
+
+  // Build explanation
+  document.getElementById('explainContent').innerHTML = `
+    <h4>📋 סיכום הפרויקט</h4>
+    <p>הפרויקט משתמש ב-<strong>${selectedComponents.map(c=>c.name).join(', ')}</strong> יחד עם <strong>${ctrlComment}</strong>.</p>
+    <h4 style="margin-top:12px">⚡ איך זה עובד</h4>
+    <p>${document.getElementById('descText').value}</p>
+    <h4 style="margin-top:12px">📚 ספריות נדרשות</h4>
+    <p>${compIncludes.length ? compIncludes.join(', ') : 'אין ספריות נוספות נדרשות'}</p>
+    <h4 style="margin-top:12px">⚠️ הערות חשובות</h4>
+    <p>ודא שכל החיבורים נכונים לפי טבלת החיבורים לפני הצריבה. בדוק מחדש את כיוון הרכיבים הפולריים.</p>
+  `;
+
+  // Show wiring tab
+  switchTab('wiring', document.querySelector('.result-tab'));
+  document.getElementById('wiringTab').classList.remove('hidden');
+
+  // Save to history
+  projectHistory.unshift({
+    name: document.getElementById('descText').value.substring(0, 30),
+    comps: selectedComponents.map(c=>c.name).join(', '),
+    ctrl: ctrlComment,
+    date: 'עכשיו'
+  });
+  buildHistory();
+}
+
+function switchTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  ['wiringTab','codeTab','explainTab'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+
+  if (hasResult) {
+    if (tab === 'wiring') document.getElementById('wiringTab').classList.remove('hidden');
+    if (tab === 'code') document.getElementById('codeTab').classList.remove('hidden');
+    if (tab === 'explain') document.getElementById('explainTab').classList.remove('hidden');
+  }
+}
+
+function switchView(view) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('buildView').classList.toggle('hidden', view !== 'build');
+  document.getElementById('historyView').classList.toggle('hidden', view !== 'history');
+}
+
+function buildHistory() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = projectHistory.map(p => `
+    <div class="history-item">
+      <div class="history-name">📁 ${p.name}</div>
+      <div class="history-meta">${p.ctrl} • ${p.comps} • ${p.date}</div>
+    </div>
+  `).join('');
+}
+
+function simulateFlash() {
+  const wrap = document.getElementById('progressWrap');
+  const bar = document.getElementById('progressBar');
+  wrap.style.display = 'block';
+  bar.style.width = '0%';
+  const steps = [
+    { w: '20%', t: 300 },
+    { w: '45%', t: 600 },
+    { w: '70%', t: 400 },
+    { w: '90%', t: 500 },
+    { w: '100%', t: 300 },
+  ];
+  let i = 0;
+  function next() {
+    if (i >= steps.length) {
+      showNotif('✅ הצריבה הושלמה בהצלחה!', 'success');
+      setTimeout(() => { wrap.style.display = 'none'; bar.style.width = '0%'; }, 2000);
+      return;
+    }
+    setTimeout(() => { bar.style.width = steps[i].w; i++; next(); }, steps[i].t);
+  }
+  next();
+}
+
+function copyCode() {
+  const code = document.getElementById('codeContent').textContent;
+  navigator.clipboard.writeText(code).then(() => showNotif('✅ הקוד הועתק!', 'success'));
+}
+
+function showNotif(msg, type = '') {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.className = 'notif' + (type ? ' ' + type : '');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2500);
+}
+
+// Init
+buildSidebar();
+buildHistory();
+</script>
+</body>
+</html>
